@@ -3,286 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>보험 퀴즈</title>
+    <title>MIRIBUSI 슬라이드쇼</title>
     <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            line-height: 1.6;
+        body, html {
             margin: 0;
-            padding: 20px;
-            background-color: #f0f4f8;
-            color: #333;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
         }
-        .quiz-container {
-            background-color: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 800px;
-            margin: 0 auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        #slideshow {
+            position: relative;
+            width: 100%;
+            height: 100%;
         }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
-        .question {
-            margin-bottom: 20px;
-            background-color: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
+        .slide.active {
+            opacity: 1;
         }
-        .options {
-            margin-left: 20px;
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        .options div {
-            margin: 10px 0;
-        }
-        button {
-            background-color: #3498db;
-            border: none;
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.3);
             color: white;
-            padding: 12px 24px;
-            text-align: center;
+            padding: 10px 15px;
             text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            font-size: 18px;
+            transition: background 0.3s;
         }
-        button:hover {
-            background-color: #2980b9;
+        .nav-button:hover {
+            background: rgba(0,0,0,0.6);
         }
-        .result {
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
+        #prev {
+            left: 10px;
         }
-        .explanation {
-            margin-top: 10px;
-            font-style: italic;
-            background-color: #e8f4f8;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        #score {
-            text-align: center;
-            font-size: 20px;
-            margin-top: 30px;
-            font-weight: bold;
-        }
-        .button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        #restart {
-            background-color: #2ecc71;
-        }
-        #restart:hover {
-            background-color: #27ae60;
+        #next {
+            right: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <h1>보험 퀴즈</h1>
-        <div id="quiz"></div>
-        <div class="button-container">
-            <button id="submit">답변 제출</button>
-            <button id="restart" style="display: none;">처음으로</button>
-        </div>
-        <div id="results"></div>
-        <div id="score"></div>
+    <div id="slideshow">
+        <div class="slide active"><img src="image1.jpg" alt="Slide 1"></div>
+        <div class="slide"><img src="image2.jpg" alt="Slide 2"></div>
+        <div class="slide"><img src="image3.jpg" alt="Slide 3"></div>
+        <div class="slide"><img src="image4.jpg" alt="Slide 4"></div>
+        <div class="slide"><img src="image5.jpg" alt="Slide 5"></div>
+        <a href="#" class="nav-button" id="prev">&lt;</a>
+        <a href="#" class="nav-button" id="next">&gt;</a>
     </div>
 
     <script>
-        const quizData = [
-            {
-                question: "장애인을 피보험자 또는 수익자로 하는 장애인 전용보험에 가입한 경우에는 연간 100만원 한도로 소득공제가 가능하다.",
-                options: ["참", "거짓"],
-                answer: "참",
-                explanation: "장애인을 피보험자 또는 수익자로 하는 장애인 전용보험에 가입한 경우에 연간 100만원 한도로 소득공제가 가능합니다."
-            },
-            {
-                question: "보험계약에서 기본이 되는 중심적인 보장내용을 주계약이라 한다.",
-                options: ["참", "거짓"],
-                answer: "참",
-                explanation: "주계약은 보험계약에서 기본이 되는 중심적인 보장내용을 의미합니다."
-            },
-            {
-                question: "전환사채는 확정이자를 받을 수 있는 채권으로서 안정성과 주식의 가격상승으로 인한 자본이득을 함께 기대할 수 있는 특징을 가지고 있는 합성채권이다.",
-                options: ["참", "거짓"],
-                answer: "참",
-                explanation: "전환사채의 특징을 정확하게 설명한 내용입니다."
-            },
-            {
-                question: "회사가 자금이 필요한 경우 발행하였으나 일정 기간이 경과한 후 해당 주식을 회수하여 소각하고자 하는 경우 발행하는 주식을 전환주식이라 한다.",
-                options: ["참", "거짓"],
-                answer: "거짓",
-                explanation: "이는 상환주식에 대한 설명입니다. 전환주식은 다른 종류의 주식으로 전환될 수 있는 주식을 말합니다."
-            },
-            {
-                question: "다음 중 단기금융시장으로 맞지 않는 것은?",
-                options: ["특수채시장", "환매조건부채권시장", "통화안정증권시장", "표지어음시장"],
-                answer: "특수채시장",
-                explanation: "특수채시장은 장기금융시장에 속합니다."
-            },
-            {
-                question: "다음 중 미국의 변액보험 판매 성공사유로 맞는 것은?",
-                options: ["고물가, 고금리시대의 돌입", "시장금리의 하락 및 주식시장의 지속적 활황", "복잡한 상품구조 및 상품의 유연성 부재", "주식시장의 침체로 인한 수익률의 저하"],
-                answer: "시장금리의 하락 및 주식시장의 지속적 활황",
-                explanation: "시장금리의 하락 및 주식시장의 지속적 활황, 뮤추얼펀드의 대중화 및 실적배당형 보험에 대한 인지도 개선, 변액보험상품의 유연성 및 다양한 투자옵션, 보험상품에만 부여하는 세제혜택 등이 미국의 변액보험 판매의 성공사유로 볼 수 있습니다."
-            },
-            {
-                question: "다음 중 변동보험금 계산방법 중 하나인 가산지급방법에 대한 설명으로 맞는 것은?",
-                options: [
-                    "사망보험금은 기본보험금에 사망시점의 변동보험금을 합한 금액을 지급한다.",
-                    "투자실적에 따라 적립금은 매일 변동하나 사망보험금은 매월 변동한다.",
-                    "사망보험금의 증가 속도가 늦어 보장을 목적으로 하는 변액보험에 가입하려는 고객에게 적합하지 않다.",
-                    "변동보험금 계산구조가 복잡하여 고객의 상품이해가 필요하다."
-                ],
-                answer: "사망보험금의 증가 속도가 늦어 보장을 목적으로 하는 변액보험에 가입하려는 고객에게 적합하지 않다.",
-                explanation: "가산지급방법은 사망보험금의 증가 속도가 늦어 보장을 목적으로 하는 변액보험에 가입하려는 고객에게 적합하지 않습니다."
-            },
-            {
-                question: "변액연금보험에 대한 설명으로 맞는 것은?",
-                options: [
-                    "변액연금은 노후를 대비 하는 상품으로 안정성보다 수익성을 우선하는 고객에게 적합하다.",
-                    "연금개시 이후의 적립금운용방법은 계약자의 선택에 따라 정액연금형, 공시이율적용 연금형 또는 변액연금형(실적배당형)으로 운용할 수 있다.",
-                    "현재 국내에서 판매되고 있는 변액연금은 일반적으로 3가지의 최저보증기능을 적용하고 있다.",
-                    "변액연금은 연금개시전 사망시에는 투자실적에 따라 변동되는 사망보험금은 일시납보험 추가가입방법에 의해 계산된다."
-                ],
-                answer: "연금개시 이후의 적립금운용방법은 계약자의 선택에 따라 정액연금형, 공시이율적용 연금형 또는 변액연금형(실적배당형)으로 운용할 수 있다.",
-                explanation: "연금개시 이후의 적립금운용방법은 계약자의 선택에 따라 정액연금형, 공시이율적용 연금형 또는 변액연금형(실적배당형)으로 운용할 수 있습니다."
-            },
-            {
-                question: "다음 중 특별계정 투입보험료로 맞는 것은?",
-                options: [
-                    "영업보험료 – 신계약비",
-                    "영업보험료 – (순보험료 + 수금비)",
-                    "영업보험료 – 순보험료",
-                    "영업보험료 – (신계약비 + 납입중유지비 + 수금비)"
-                ],
-                answer: "영업보험료 – (신계약비 + 납입중유지비 + 수금비)",
-                explanation: "특별계정 투입보험료 = 영업보험료 - (신계약비 + 납입중유지비 + 수금비)"
-            },
-            {
-                question: "아래와 같이 제2회 보험료를 납입할 경우 보험료의 특별계정 투입일로 맞는 것은? (투입일 계산시 공휴일은 없는 것으로 본다.) ∙ 변액보험계약일 : 2012년 10월10일 ∙ 제2회 보험료 납입일: 2012년 11월9일",
-                options: [
-                    "2012년 11월 9일",
-                    "2012년 11월 10일",
-                    "2012년 11월 11일",
-                    "2012년 11월 12일"
-                ],
-                answer: "2012년 11월 11일",
-                explanation: "제2회 보험료의 특별계정 투입일은 2012년 11월 11일입니다. 계약해당일 + 제1영업일에 이체사유가 발생한 날로 계산합니다."
-            }
-        ];
+        const slides = document.querySelectorAll('.slide');
+        const prevButton = document.getElementById('prev');
+        const nextButton = document.getElementById('next');
+        let currentSlide = 0;
 
-        let currentQuestion = 0;
-        let score = 0;
-
-        function loadQuestion() {
-            const questionElement = document.getElementById("quiz");
-            const currentQuizData = quizData[currentQuestion];
-
-            let questionHTML = `
-                <div class="question">
-                    <h2>문제 ${currentQuestion + 1}</h2>
-                    <p>${currentQuizData.question}</p>
-                </div>
-                <div class="options">
-            `;
-
-            for (let i = 0; i < currentQuizData.options.length; i++) {
-                questionHTML += `
-                    <div>
-                        <input type="radio" name="answer" id="option${i}" value="${currentQuizData.options[i]}">
-                        <label for="option${i}">${currentQuizData.options[i]}</label>
-                    </div>
-                `;
-            }
-
-            questionHTML += '</div>';
-            questionElement.innerHTML = questionHTML;
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
         }
 
-        function loadNextQuestion() {
-            currentQuestion++;
-            if (currentQuestion < quizData.length) {
-                loadQuestion();
-                document.getElementById("submit").innerHTML = "답변 제출";
-                document.getElementById("submit").onclick = checkAnswer;
-                document.getElementById("results").innerHTML = "";
-            } else {
-                showResults();
-            }
+        function nextSlide() {
+            showSlide(currentSlide + 1);
         }
 
-        function checkAnswer() {
-            const answerElements = document.getElementsByName("answer");
-            let selectedAnswer;
-
-            for (let i = 0; i < answerElements.length; i++) {
-                if (answerElements[i].checked) {
-                    selectedAnswer = answerElements[i].value;
-                    break;
-                }
-            }
-
-            if (selectedAnswer === undefined) {
-                alert("답변을 선택해주세요!");
-                return;
-            }
-
-            const currentQuizData = quizData[currentQuestion];
-            const resultsElement = document.getElementById("results");
-
-            if (selectedAnswer === currentQuizData.answer) {
-                score++;
-                resultsElement.innerHTML = '<div class="result" style="background-color: #d4edda; color: #155724;">정답입니다!</div>';
-            } else {
-                resultsElement.innerHTML = '<div class="result" style="background-color: #f8d7da; color: #721c24;">오답입니다.</div>';
-            }
-
-            resultsElement.innerHTML += `<div class="explanation">${currentQuizData.explanation}</div>`;
-            
-            document.getElementById("submit").innerHTML = "다음 문제";
-            document.getElementById("submit").onclick = loadNextQuestion;
+        function prevSlide() {
+            showSlide(currentSlide - 1);
         }
 
-        function showResults() {
-            const quizElement = document.getElementById("quiz");
-            const resultsElement = document.getElementById("results");
-            const scoreElement = document.getElementById("score");
-            const submitButton = document.getElementById("submit");
-            const restartButton = document.getElementById("restart");
+        prevButton.addEventListener('click', prevSlide);
+        nextButton.addEventListener('click', nextSlide);
 
-            quizElement.innerHTML = "";
-            resultsElement.innerHTML = "";
-            scoreElement.innerHTML = `퀴즈가 끝났습니다! 당신의 점수는 ${score}/${quizData.length}입니다.<br>정답률: ${(score/quizData.length*100).toFixed(2)}%`;
-            submitButton.style.display = "none";
-            restartButton.style.display = "inline-block";
-        }
-
-        function restartQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            loadQuestion();
-            document.getElementById("submit").style.display = "inline-block";
-            document.getElementById("submit").innerHTML = "답변 제출";
-            document.getElementById("submit").onclick = checkAnswer;
-            document.getElementById("restart").style.display = "none";
-            document.getElementById("results").innerHTML = "";
-            document.getElementById("score").innerHTML = "";
-        }
-
-        loadQuestion();
-        document.getElementById("submit").addEventListener("click", checkAnswer);
-        document.getElementById("restart").addEventListener("click", restartQuiz);
+        setInterval(nextSlide, 60000); // 1분마다 자동 전환
     </script>
 </body>
 </html>
