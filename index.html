@@ -10,11 +10,12 @@
             padding: 0;
             height: 100%;
             overflow: hidden;
+            background-color: #000; /* 배경색 설정 */
         }
         #slideshow {
             position: relative;
             width: 100%;
-            height: 100vh; /* 뷰포트 높이의 100%를 사용 */
+            height: 100vh;
             overflow: hidden;
         }
         .slide {
@@ -25,21 +26,26 @@
             height: 100%;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .slide.active {
             opacity: 1;
         }
-        .slide img, .slide video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .slide video {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
         }
         .nav-button {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0,0,0,0.3);
-            color: white;
+            background: rgba(255,255,255,0.3);
+            color: black;
             padding: 10px 15px;
             text-decoration: none;
             font-size: 18px;
@@ -47,7 +53,7 @@
             z-index: 10;
         }
         .nav-button:hover {
-            background: rgba(0,0,0,0.6);
+            background: rgba(255,255,255,0.6);
         }
         #prev {
             left: 10px;
@@ -124,7 +130,6 @@
         prevButton.addEventListener('click', prevSlide);
         nextButton.addEventListener('click', nextSlide);
 
-        // 페이지 로드 및 리사이즈 시 처리
         function handleResize() {
             const slideshow = document.getElementById('slideshow');
             slideshow.style.height = window.innerHeight + 'px';
