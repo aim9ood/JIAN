@@ -10,7 +10,7 @@
             padding: 0;
             height: 100%;
             overflow: hidden;
-            background-color: #000; /* 배경색 설정 */
+            background-color: #000;
         }
         #slideshow {
             position: relative;
@@ -72,19 +72,19 @@
 <body>
     <div id="slideshow">
         <div class="slide active">
-            <video src="video1.mp4" muted loop playsinline></video>
+            <video src="video1.mp4" muted playsinline></video>
         </div>
         <div class="slide">
-            <video src="video2.mp4" muted loop playsinline></video>
+            <video src="video2.mp4" muted playsinline></video>
         </div>
         <div class="slide">
-            <video src="video3.mp4" muted loop playsinline></video>
+            <video src="video3.mp4" muted playsinline></video>
         </div>
         <div class="slide">
-            <video src="video4.mp4" muted loop playsinline></video>
+            <video src="video4.mp4" muted playsinline></video>
         </div>
         <div class="slide">
-            <video src="video5.mp4" muted loop playsinline></video>
+            <video src="video5.mp4" muted playsinline></video>
         </div>
         <a href="#" class="nav-button" id="prev">&lt;</a>
         <a href="#" class="nav-button" id="next">&gt;</a>
@@ -135,17 +135,29 @@
             slideshow.style.height = window.innerHeight + 'px';
         }
 
+        function startAutoPlay() {
+            videos.forEach((video, index) => {
+                video.addEventListener('ended', () => {
+                    if (index === videos.length - 1) {
+                        // 마지막 비디오가 끝나면 처음으로 돌아감
+                        showSlide(0);
+                    } else {
+                        nextSlide();
+                    }
+                });
+            });
+            playVideo(currentSlide);
+        }
+
         window.addEventListener('load', () => {
             videos.forEach(video => {
                 video.load();
             });
-            playVideo(currentSlide);
             handleResize();
+            startAutoPlay();
         });
 
         window.addEventListener('resize', handleResize);
-
-        setInterval(nextSlide, 60000); // 1분마다 자동 전환
     </script>
 </body>
 </html>
